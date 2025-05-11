@@ -86,30 +86,11 @@
 //     }
 // }
 
-
-
 // val finalTeam = buildTeam(people)
 // println(finalTeam)
 
-
-
 // println("FINAL TEAM")
 // finalTeam.foreach(p => println(s"${p.name}, Age: ${p.age}, Skill: ${p.skill}, Rating: ${p.rating}"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // // Scala Prepend vs Append in Scala List - O(1) operation
 // val newListPrepend = 1 :: List(2,3)
@@ -130,7 +111,6 @@
 // buffer(2) = 99
 // buffer.remove(1)
 // println(buffer)
-
 
 // // Reverse a string
 // val name = "Betty".reverse
@@ -236,39 +216,261 @@
 // val reverseS = reverseString("hello world", true)
 // val reverseT = reverseString("hello world", false)
 
-case class Person (
-    name: String,
-    age: Int,
-    role: String,
-    rating: Int,
-)
+// case class Person (
+//     name: String,
+//     age: Int,
+//     role: String,
+//     rating: Int,
+// )
 
-case class Team (
-    members: List[Person],
+// case class Team (
+//     members: List[Person],
+//     name: String
+// )
+
+// val people = List(
+//     Person("Alice", 30, "Frontend", 56),
+//     Person("Bob", 35, "Backend", 93),
+//     Person("Charlie", 28, "Frontend", 75),
+//     Person("Diana", 32, "DevOps", 40),
+//     Person("Eve", 29, "QA", 10),
+//     Person("Frank", 40, "Backend", 82),
+//     Person("Grace", 26, "Design", 55),
+//     Person("Hank", 33, "Backend", 74),
+//     Person("Ivy", 25, "Product", 52),
+//     Person("Jack", 37, "Backend", 60),
+//     Person("Kira", 24, "QA", 58),
+//     Person("Leo", 45, "Backend", 95),
+//     Person("Mona", 27, "Design", 63),
+//     Person("Nina", 42, "Security", 72),
+//     Person("Omar", 23, "Backend", 85)
+// )
+
+// // Take a list of people and split them up into 2 teams
+// def splitTeam(members: List[Person]): Either[String, Team] = {
+//     // Keep track of a state, state includes building two teams, and checking against a criteria
+//     // if the team hits the criteria then we basically short circuit and return the first team build that has met all the requirements
+//     // 
+//     case class State(teamA: List[Person], teamB: List[Person], result: Option[Team])   
+
+//     val initialState = State(Nil, Nil, None)
+
+//     val finalState = members.foldLeft(initialState) {
+//         // Case of pattern matching 
+//         // The accumulator is the state - this is the evolvlin result
+//         // person is the current elemnt in the members
+//         // case (State(teamA, teamB, result), people) if result.isDefined => 
+//         //     State(teamA, teamB, result)
+
+//         case(State(teamA, teamB, result), people) => 
+//             if(people.age < 30 && people.rating >= 70) {
+//                 val updatedTeam = teamA :+ people
+//                 State(updatedTeam, teamB, Some(Team(updatedTeam, "Team A")))
+//             }
+//             else if (people.age >= 30 && people.rating >= 50) {
+//                 val updateTeam = teamB :+ people
+//                 State(teamA, updateTeam, Some(Team(updateTeam, "Team B")))
+//             } else {
+//                 State(teamA, teamB, None)
+//             }
+//     }
+//     finalState.result.toRight("No Team Met the Completion Criteria")
+// }
+
+// val result = splitTeam(people)
+
+// result match {
+//   case Right(team) =>
+//     println(s"Team found: ${team.name}")
+//     team.members.foreach { p =>
+//     println(s"Name: ${p.name}, Age: ${p.age} Role: ${p.role}, Rating: ${p.rating}")
+//     }
+//   case Left(error) =>
+//     println(s"${error}")
+// }
+
+
+// Reverse a string with another parameter and give an error
+import java.nio.channels.NonReadableChannelException
+
+def reverseString(s: String, isReversed: Boolean): String = {
+    if (isReversed) {
+        val reversedString = s.reverse
+        reversedString
+    } else {
+        "Unable to reverse string"
+    }
+}
+
+
+println(reverseString("hello world", true))
+
+// Take a list of people and based on certain parameters split up into 2 teams and then whichever team meets the requirements first
+// return the best team.  The idea is to break out the best team without have to go over the full lenght of the list.
+// This should functional Scala
+
+case class People(
+    name: String, // Daniel
+    age: Int, // 25
+    title: String, // Software Engineer
+    rating: Int, // From 0 - 100
+    // yearsOfExperience: Int, // 5
+    // level: Int // From 1 - 7
+    email: String,
+    skills: String
+)
+case class Team(
+    members: List[People],
     name: String
 )
 
 val people = List(
-    Person("Alice", 30, "Frontend", 56),
-    Person("Bob", 35, "Backend", 93),
-    Person("Charlie", 28, "Frontend", 75),
-    Person("Diana", 32, "DevOps", 40),
-    Person("Eve", 29, "QA", 10),
-    Person("Frank", 40, "Backend", 82),
-    Person("Grace", 26, "Design", 55),
-    Person("Hank", 33, "Backend", 74),
-    Person("Ivy", 25, "Product", 52),
-    Person("Jack", 37, "Backend", 60),
-    Person("Kira", 24, "QA", 58),
-    Person("Leo", 45, "Backend", 95),
-    Person("Mona", 27, "Design", 63),
-    Person("Nina", 42, "Security", 72),
-    Person("Omar", 23, "Backend", 85)
+    People("Alice", 30, "Frontend", 76, "alice@acme.com", "HTML,CSS,JavaScript"),
+    People("Bob", 35, "Backend", 93, "bob@acme.com", "Scala,Java,PostgreSQL"),
+    People("Charlie", 28, "Frontend", 75, "charlie@acme.com", "React,TypeScript,CSS"),
+    People("Diana", 32, "DevOps", 40, "diana@acme.com", "Docker,AWS,Terraform"),
+    People("Eve", 29, "QA", 72, "eve@acme.com", "TestNG,Selenium,Python"),
+    People("Frank", 40, "Backend", 82, "frank@acme.com", "Java,Kafka,Redis"),
+    People("Grace", 26, "Design", 85, "grace@acme.com", "Figma,Sketch,Illustrator"),
+    People("Hank", 33, "Backend", 74, "hank@acme.com", "Scala,GraphQL,MySQL"),
+    People("Ivy", 25, "Frontend", 80, "ivy@acme.com", "Vue.js,CSS,SASS"),
+    People("Jack", 37, "Product", 78, "jack@acme.com", "Roadmapping,User Research,JIRA"),
+    People("Kira", 24, "QA", 73, "kira@acme.com", "Cypress,Mocha,JavaScript"),
+    People("Leo", 45, "Backend", 95, "leo@acme.com", "Go,PostgreSQL,gRPC"),
+    People("Mona", 27, "Design", 88, "mona@acme.com", "Photoshop,UX,Branding"),
+    People("Nina", 42, "Security", 72, "nina@acme.com", "Threat Modeling,Burp Suite,SIEM"),
+    People("Omar", 23, "Backend", 85, "omar@acme.com", "Node.js,MongoDB,Docker")
 )
 
-// // Take a list of people and split them up into 2 teams
-// // 
-// def splitTeam(team: List[Person]): Either[String, List[Person]] = {
-//     case class State(teamA: Team, )
+// Keep tracking of running total - Average ratings of the team
+// Keep track of counts of people on the team
+// Keep track of what roles on their team
+// Keep track of the average age
+// Keep track of unique number of titles
 
-// }
+case class TeamInfo (
+    totalRatings: Int,
+    totalNumberOfPeople: Int,
+    titles: Set[String],
+    members: List[People]
+)
+
+def meetsCriteria(teamInfo: TeamInfo) = {
+    val avgRating = if (teamInfo.totalRatings == 0) 0.0  else teamInfo.totalRatings.toDouble/teamInfo.totalNumberOfPeople 
+    
+    teamInfo.totalNumberOfPeople >= 3 &&
+    avgRating >= 70 &&
+    teamInfo.titles.size >= 3 &&
+    teamInfo.titles.contains("Backend") &&
+    teamInfo.titles.contains("Frontend")
+}
+
+def splitTeam(people: List[People]): Option[Team] = {
+    // Updating state of our team as we iterate 
+    // through each person in the people list and add
+    // them to teamA or teamB
+    // Also check the criteria of the team such that once a criteria is met
+    // we can short circuit and basically return the best team that meets
+    // the criteria first
+    case class Acc(teamA: TeamInfo, teamB: TeamInfo)
+    val empty = TeamInfo(0, 0, Set.empty, Nil)
+
+    people.iterator
+        .scanLeft(Acc(empty, empty)) {
+            case(Acc(a,b), person) =>
+                // Team A's requirements
+                if (person.age < 30 && person.rating >= 50) {
+                    val updatedTeamInfo = TeamInfo(
+                        a.totalRatings + person.rating,
+                        a.totalNumberOfPeople + 1,
+                        a.titles + person.title,
+                        a.members :+ person,
+                    )
+                    Acc(updatedTeamInfo, b)
+                } 
+                else if (person.age >= 30 && person.rating >= 70) {
+                    val updatedTeamInfo = TeamInfo(
+                        b.totalRatings + person.rating,
+                        b.totalNumberOfPeople + 1,
+                        b.titles + person.title,
+                        b.members :+ person
+                    )
+                    Acc(a, updatedTeamInfo)
+                } else {
+                    Acc(a,b)
+                }
+        }
+        .collectFirst {
+            case Acc(teamA, teamB) if meetsCriteria(teamA) => Team(teamA.members, "Team A")
+            case Acc(teamA, teamB) if meetsCriteria(teamB) => Team(teamB.members, "Team B")
+        }
+}
+
+val result = splitTeam(people)
+
+result match {
+    case Some(team) =>
+        println(s"Completed team: ${team.name}")
+        team.members.foreach(p =>
+            println(s"Name: ${p.name}, Age: ${p.age}, Title: ${p.title}, Rating: ${p.rating}")
+        )
+
+        // Wanted Front End Roles and their Emails
+        val frontendEmails = team.members
+            .filter(_.title == "Frontend")
+            .map(_.email)
+            .mkString(";")
+        println(s"${frontendEmails}")
+
+        // Group the Team by Roles
+        val groupByTitle = team.members.groupBy(_.title)
+        println(s"Members groupy by ${groupByTitle}")
+
+        // SoryBy: Top-Rated team members, Use - to go from the top
+        val topRated = team.members.sortBy(-_.rating).take(3)
+        println(s"Top Rated Members: ${topRated}")
+
+        // Filter + map: QA Emails
+        val qaEmails = team.members.filter(_.title == "Backend").map(_.email).mkString(", ")
+        println(s"Backend emails: ${qaEmails}")
+
+        // Get all the skills from your team
+        val allSkills: List[String] = team.members.flatMap(_.skills.split(",")).map(_.trim).distinct.sorted
+        println(s"All Skills: ${allSkills}")
+
+        // List of tuples based on index and people
+        val indexedPeople: List[(Int, People)] = people.zipWithIndex.map {
+            case (person, idx) => (idx + 1, person) // 1-based index
+        }
+        println(s"Indexed People: ${indexedPeople}")
+
+        // Prepend Lead to list of people
+        val namesPrependExample = "Lead " +: people.map(_.name)
+        println(s"${namesPrependExample}")
+        
+        // Reverse list of people
+        val reversedNames = people.map(_.name).reverse
+        println(s"${reversedNames}")
+
+        // Make string out of people's names
+        val nameListString = people.map(_.name).mkString(" | ")
+        println(s"${nameListString}")
+
+    case None =>
+        println("No team met the critiera")
+}
+
+
+
+
+
+// Interview Prep
+// Pattern Matching, Splitting strings into list, making strings from lists, groupBy, sortBy, map, foldLeft, filter, zip, zipWithIndex, immutable, ops (+:)
+// Some concurrency questions around golang
+// Spark Source Code
+// Tell me about a time you handled a production outage and what did you do
+// Discuss how to scale kafka, microservices, spark, etc
+// Time me everything you know about TimeSeries database
+
+// How did you lead a technical leadership project and argue for a technique and what evidence he collected and how he made his argument
+
