@@ -1,3 +1,8 @@
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
 // import scala.collection.mutable.ArrayBuffer
 // val xs = 1 to 10 by 2
 // val mults = xs.map(_ * 2)
@@ -293,17 +298,17 @@
 // Reverse a string with another parameter and give an error
 import java.nio.channels.NonReadableChannelException
 
-def reverseString(s: String, isReversed: Boolean): String = {
-    if (isReversed) {
-        val reversedString = s.reverse
-        reversedString
-    } else {
-        "Unable to reverse string"
-    }
-}
+// def reverseString(s: String, isReversed: Boolean): String = {
+//     if (isReversed) {
+//         val reversedString = s.reverse
+//         reversedString
+//     } else {
+//         "Unable to reverse string"
+//     }
+// }
 
 
-println(reverseString("hello world", true))
+// println(reverseString("hello world", true))
 
 // Take a list of people and based on certain parameters split up into 2 teams and then whichever team meets the requirements first
 // return the best team.  The idea is to break out the best team without have to go over the full lenght of the list.
@@ -406,9 +411,9 @@ def splitTeam(people: List[People]): Option[Team] = {
         }
 }
 
-val result = splitTeam(people)
+val result2 = splitTeam(people)
 
-result match {
+result2 match {
     case Some(team) =>
         println(s"Completed team: ${team.name}")
         team.members.foreach(p =>
@@ -421,6 +426,8 @@ result match {
             .map(_.email)
             .mkString(";")
         println(s"${frontendEmails}")
+
+        // Use zip to combine 2 lists together where both values of the list are joined by index
 
         // Group the Team by Roles
         val groupByTitle = team.members.groupBy(_.title)
@@ -460,10 +467,6 @@ result match {
         println("No team met the critiera")
 }
 
-
-
-
-
 // Interview Prep
 // Pattern Matching, Splitting strings into list, making strings from lists, groupBy, sortBy, map, foldLeft, filter, zip, zipWithIndex, immutable, ops (+:)
 // Some concurrency questions around golang
@@ -473,4 +476,204 @@ result match {
 // Time me everything you know about TimeSeries database
 
 // How did you lead a technical leadership project and argue for a technique and what evidence he collected and how he made his argument
+  val name = "Daniel"
+
+  // Reverse a string
+  val result = name.reverse
+
+  println(result)
+
+  // reveres a string with another peramater and then give and error
+
+  def reverseString(s: String, isReversed: Boolean): String =
+    if (isReversed) s.reverse else s
+
+  println(reverseString(name, true))
+  println(reverseString(name, false))
+
+  // splitting strings into lists
+  val newString = name.toList
+  println(newString)
+
+  val numbers = List(1,4,523,1,45,9)
+  
+  // Sort the data
+  val sortedNumbersAsc = numbers.sorted
+  println(sortedNumbersAsc)
+
+  val sortedNumbersDesc = numbers.sorted(Ordering[Int].reverse)
+  println(sortedNumbersDesc)
+
+  // case classes, 
+  case class Person(name: String, age: Int,role: String, rating: Int)
+
+  // Take a list of people and based on certain parameters split up into 2 teams and then whichever team meats the requirement first based on the team members being a fit spit out the best. End condition is to break out a completed team.  They only want you to go over the list once. 
+
+    //foldLeft - returns the final accumulated value of the state which in this case
+  // has to go through whole list
+
+  // scanLeft - returns a list of intermediate accumulated values including the initial value
+  // more situated for short circuiting 
+
+  // LazyList - which computes the last on demand and returns the first team that meets completion criteria
+  
+
+  val team = List(
+    Person("Daniel", 36, "Back-End Engineer", 90),
+    Person("Bob", 25, "DevOps", 80),
+    Person("George", 23, "Front-End Engineer", 75),
+    Person("Kendall", 26, "QA", 70),
+    Person("Amy", 28, "Back-End Engineer", 80),
+    Person("Alice", 29, "Front-End Engineer", 60),
+    Person("Francis", 31, "Back-End Engineer", 50),
+    Person("Michael", 31, "DevOps", 70),
+    Person("Nick", 33, "Front-End Engineer", 75),
+    Person("Isabel", 36, "QA", 54),
+    Person("Justin", 38, "Front-End Engineer", 67),
+  )
+
+  def isTeamComplete(team: List[Person]): Boolean = {
+    val roles = team.map(_.role).toSet
+    val avgRating = team.map(_.rating).sum.toDouble / team.size
+    val hasFrontEnd = roles.exists(_.contains("Front-End"))
+    val hasBackEnd = roles.exists(_.contains("Back-End"))
+    avgRating >= 70 && team.size >= 3 && hasFrontEnd && hasBackEnd
+  }
+
+  def splitTeam(team: List[Person]): List[Person] = {
+    case class State(teamA: List[Person], teamB: List[Person])
+
+    // Lazily Build all intermediate team states
+    val states: LazyList[State] = team.to(LazyList).scanLeft(State(Nil, Nil)) {
+      case (State(a,b), person) => 
+        if (a.size <= b.size) State(person :: a, b)
+        else State(a, person :: b)
+    }
+
+    // Lazily find the first valid team
+    states.collectFirst {
+      case State(a, b) if isTeamComplete(a) => a
+      case State(a, b) if isTeamComplete(b) => b
+    }.getOrElse(Nil)
+  }
+
+  val bestTeam = splitTeam(team)
+
+  println(bestTeam)
+
+
+
+  // pattern matching 
+  name match {
+    case "Daniel" => println(s"Found ${name}")
+    case _ => println("Not Found")
+  }
+
+  // making strings from list
+  val makeStrings = newString.mkString
+
+  println(makeStrings)
+
+  val words = "The quick brown fox is on the run."
+
+  val splitWords = words.split("\\s+").toList
+
+  println(splitWords)
+
+  val stringCheck = "xyz"
+
+ 
+
+  def sortWords(words: String): String = {
+    if (words.length > 0) words.sorted else ""
+  }
+  
+  println(sortWords(stringCheck)) 
+
+   // sortBy
+   val sortByAZ = stringCheck.sorted
+  println(sortByAZ)
+
+  val sortByZA = words.sorted(Ordering[Char].reverse)
+
+  println(sortByZA)
+
+  val sortBy = splitWords.sortBy(_.length)
+  println(sortBy)
+
+  //map
+  val mapValues = splitWords.map(x => x + "Hello")
+  println(mapValues)
+
+  val mapMath = sortedNumbersDesc.map(x => x*2)
+  println(mapMath)
+
+    //filter
+  val filterValues = sortedNumbersAsc.filter(x => x != 1)
+  println(filterValues)
+
+  //zip
+  val a = List(1,2,3,4)
+  val b = List('a','b','c','d')
+  val zipValues = a.zip(b)
+  println(zipValues)
+
+  //zipWithIndex
+  val zipWithIndexValues = b.zipWithIndex
+  println(zipWithIndexValues)
+
+  //immutable ops +:
+  
+  // reducing guards
+
+  
+  // Group by
+  val groupByValues = sortedNumbersAsc.groupBy(x => x != 1)
+  println(groupByValues)
+  groupByValues match {
+    case m if m.contains(true) => println(m.getOrElse(true, List()))
+    case _ => println("No Group Found")
+  }
+
+
+  val listOfThings = List("a","b", "c")
+  // val appendList = listOfThings.appended("d")
+  val appendList = listOfThings :+ "d"
+  println(appendList)
+
+  //Is it faster to do a list and a pend or a list and a prepend?
+  // prepend - O(1)
+  val appendListTwo = "d" :: listOfThings
+  println(appendListTwo)
+
+  val words2 = List("hi", "hello", "scala", "a")
+
+  words2.foreach {
+    case w if w.length > 3 => println(s"Long word: $w")
+    case w if w.length == 1 => println(s"Very short word: $w")
+    case w => println(s"Other word: $w")
+  }
+
+  val people2 = List(("Alice", 30), ("Bob", 17), ("Charlie", 40))
+
+  people2.foreach {
+    case (name, age) if age >= 18 => println(s"$name is an adult")
+    case (name, _) => println(s"$name is a minor")
+  }
+
+  // Define a function that takes an implicit parameter 'name' of type String
+  def greet(implicit name2: String) = s"Hello, $name2"
+
+  // Define an implicit value 'myName' of type String in the scope
+  implicit val myName2 = "Alice"
+
+  // Call the greet function without explicitly passing 'name'
+  // The compiler automatically uses the implicit value 'myName'
+  println(greet)  // Output: "Hello, Alice"
+
+  val futureValue = Future { 42 } // A Future that computes the value 42 asynchronously.
+  val result2 = Await.result(futureValue, 2.seconds) // Blocks the thread for up to 2 seconds, waiting for the result of the Future.
+
+
+
 
